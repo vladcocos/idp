@@ -1,0 +1,6 @@
+sudo docker swarm init
+sudo docker stack deploy -c stack.yml booking
+sudo docker service ls
+sudo docker container ls
+sudo docker stack rm booking
+sudo docker exec -it <container_id> bash
