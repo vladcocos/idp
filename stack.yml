@@ -5,13 +5,14 @@ services:
     image: mysql:5.7
     volumes:
     - db_data:/var/lib/mysql
+    - ./database/init.sql:/docker-entrypoint-initdb.d/0_init.sql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: hotel_booking
+      MYSQL_DATABASE: hotel_booking_db
       MYSQL_USER: root
       MYSQL_PASSWORD: root
     ports:
       - "32000:3306"
 
 volumes:
-  db_data: {}
+  db_data:
