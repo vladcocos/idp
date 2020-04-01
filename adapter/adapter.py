@@ -58,7 +58,7 @@ class db_connection():
         for i in range(len(check_out)):
             check_out[i] = int(check_out[i])
 
-        query = (f"INSERT INTO bookings (room_id, first_name, last_name, check_in, check_out) VALUES (%s, %s, %s, %s, %s)")
+        query = ("INSERT INTO bookings (room_id, first_name, last_name, check_in, check_out) VALUES (%s, %s, %s, %s, %s)")
         args = (int(room_id), first_name, last_name, datetime.date(check_in[2], check_in[1], check_in[0]), datetime.date(check_out[2], check_out[1], check_out[0]))
         self.db_cursor.execute(query, args)
         return True, 'Room was booked successfully'
@@ -161,3 +161,4 @@ def book():
 if __name__ == "__main__":
     init()
     app.run(host = '0.0.0.0', port = 32500, debug = True)
+
