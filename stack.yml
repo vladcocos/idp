@@ -15,7 +15,7 @@ services:
       - "32000:3306"
 
   adapter:
-    image: adapter
+    image: vldcocos/hotel_booking:latest
     depends_on:
       - db
     ports:
