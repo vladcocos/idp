@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   db:
@@ -8,10 +8,18 @@ services:
     - ./database/init.sql:/docker-entrypoint-initdb.d/0_init.sql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hotel_booking_db
       MYSQL_USER: root
       MYSQL_PASSWORD: root
     ports:
       - "32000:3306"
 
+  adapter:
+    image: adapter
+    depends_on:
+      - db
+    ports:
+      - "32500:32500"
+
 volumes:
-  db_data:
+  db_data: {}
