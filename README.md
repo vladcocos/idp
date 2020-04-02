@@ -25,3 +25,11 @@ Serviciu ce monitorieaza diferite statistici despre hotel precum gradul de ocupa
 
 ## Schema serviciilor
 ![Schema serviciilor](./assets/img/schema_servicii.png?raw=true "Schema serviciilor")
+
+## Cum se ruleaza
+Pentru a testa adaptorul si baza de date, se pot folosi urmatoarele comenzi:
+- pentru a adauga o camera noua: \
+`$ curl --header "Content-Type: application/json" --data '{"room_id": "3", "room_type": "Double room", "capacity": "2", "bathroom": "True", "balcony": "False", "price": "120"}' -X POST http://0.0.0.0:32500/admin`
+
+- pentru a rezerva o camera: \
+`$ curl --header "Content-Type: application/json" --data '{"room_id": "4", "check_in": "01/04/2020", "check_out": "05/04/2020", "first_name": "Andrei", "last_name": "Popescu"}' -X POST http://0.0.0.0:32500/booking`
