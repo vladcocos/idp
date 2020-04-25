@@ -24,7 +24,15 @@ class db_connection():
         if not result:
             return False, 'Room does not exist'
         return True, 'Room exists already'
-        
+
+    def get_rooms(self):
+        query = (f"SELECT * FROM rooms")
+        self.db_cursor.execute(query)
+        result = self.db_cursor.fetchall()
+        if not result:
+            return False, 'There are no rooms', result
+        return True, '', result
+
     def add_room(self, room_id, room_type, capacity, bathroom, balcony, price):
         ret, err = self.check_room_exists(room_id)
         if ret == True:
@@ -50,16 +58,16 @@ class db_connection():
         if ret == False:
             return False, err
 
-        check_in = check_in.split('/')
+        check_in = check_in.split('-')
         for i in range(len(check_in)):
             check_in[i] = int(check_in[i])
 
-        check_out = check_out.split('/')
+        check_out = check_out.split('-')
         for i in range(len(check_out)):
             check_out[i] = int(check_out[i])
 
         query = ("INSERT INTO bookings (room_id, first_name, last_name, check_in, check_out) VALUES (%s, %s, %s, %s, %s)")
-        args = (int(room_id), first_name, last_name, datetime.date(check_in[2], check_in[1], check_in[0]), datetime.date(check_out[2], check_out[1], check_out[0]))
+        args = (int(room_id), first_name, last_name, datetime.date(check_in[0], check_in[1], check_in[2]), datetime.date(check_out[0], check_out[1], check_out[2]))
         self.db_cursor.execute(query, args)
         return True, 'Room was booked successfully'
     
@@ -119,7 +127,7 @@ def init():
 
 db_connection = db_connection()
 
-@app.route("/admin", methods=["POST"])
+@app.route("/add_room", methods=["POST"])
 def add_room():
     room_id = request.json['room_id']
     room_type = request.json['room_type']
@@ -129,7 +137,7 @@ def add_room():
     price = request.json['price']
 
     ret, err = db_connection.add_room(room_id, room_type, capacity, bathroom, balcony, price)
-    if ret == True:
+    if ret:
         status = 'Success'
     else:
         status = 'Failed'
@@ -139,16 +147,26 @@ def add_room():
         'reason' : err,
     })
 
+def get_dict_from_data(s):
+    result = {}
+    if s:
+        s = s.split('&')
+        for item in s:
+            k, v = item.split('=')
+            result[k] = v
+    return result
+
 @app.route("/booking", methods=["POST"])
 def book():
-    room_id = request.json['room_id']
-    first_name = request.json['first_name']
-    last_name = request.json['last_name']
-    check_in = request.json['check_in']
-    check_out = request.json['check_out']
+    data = get_dict_from_data(request.data.decode("utf-8"))
+    room_id = data['room_id']
+    first_name = data['first_name']
+    last_name = data['last_name']
+    check_in = data['check_in']
+    check_out = data['check_out']
 
     ret, err = db_connection.book(room_id, first_name, last_name, check_in, check_out)
-    if ret == True:
+    if ret:
         status = 'Success'
     else:
         status = 'Failed'
@@ -156,9 +174,22 @@ def book():
     return jsonify({
         'status' : status,
         'reason' : err,
+    })
+
+@app.route("/rooms", methods=["GET"])
+def get_rooms():
+    ret, err, rooms = db_connection.get_rooms()
+    if ret:
+        status = 'Success'
+    else:
+        status = 'Failed'
+
+    return jsonify({
+        'status' : status,
+        'reason' : err,
+        'rooms': rooms,
     })
 
 if __name__ == "__main__":
     init()
-    app.run(host = '0.0.0.0', port = 32500, debug = True)
-
+    app.run(host='0.0.0.0', port=32500, debug=True)

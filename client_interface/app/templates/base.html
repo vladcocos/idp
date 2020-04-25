@@ -1,0 +1,24 @@
+{% extends 'bootstrap/base.html' %}
+
+<link rel=stylesheet type=text/css href="{{ url_for('assets', filename='style.css') }}">
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Hotel booking</a>
+        </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/index">Home</a></li>
+                <li><a href="/rooms">Rooms</a></li>
+                <li><a href="/booking">Book</a></li>
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
