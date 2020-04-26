@@ -66,7 +66,6 @@ def book_room():
                    'check_out': form.check_out.data}
         header = {"Content-Type":"application/json"}
         r = session.post(DB_ADAPTER_URL + '/book_room', headers=header, data=payload)
-
         title = 'Booking result'
         description = 'Your booking for %s between %s and %s' % (current_rooms[int(room_id)][1],
                                                     form.check_in.data.strftime('%d %b %Y'),

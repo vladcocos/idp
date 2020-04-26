@@ -25,6 +25,15 @@ class db_connection():
             return False, 'Room does not exist'
         return True, 'Room exists already'
 
+    def check_booking_exists(self, room_id, check_in_date, check_out_date):
+        query = (f"SELECT * FROM bookings WHERE room_id=%(room_id)s and ((date(%(check_in_date)s) >= check_in and date(%(check_in_date)s) < check_out) or (date(%(check_out_date)s) > check_in and date(%(check_out_date)s) <= check_out))")
+        args = {'room_id': int(room_id), 'check_in_date': check_in_date, 'check_out_date': check_out_date}
+        self.db_cursor.execute(query, args)
+        result = self.db_cursor.fetchall()
+        if result:
+            return True, 'Room is already booked for that period'
+        return False, 'Room is not booked for that period'
+
     def get_rooms(self):
         query = (f"SELECT * FROM rooms")
         self.db_cursor.execute(query)
@@ -70,8 +79,8 @@ class db_connection():
         return True, 'Room deleted successfully'
 
     def book(self, room_id, first_name, last_name, check_in, check_out):
-        ret, err = self.check_room_exists(room_id)
-        if ret == False:
+        ret, err = self.check_booking_exists(room_id, check_in, check_out)
+        if ret == True:
             return False, err
 
         check_in = check_in.split('-')
