@@ -33,25 +33,41 @@ class db_connection():
             return False, 'There are no rooms', result
         return True, '', result
 
-    def add_room(self, room_id, room_type, capacity, bathroom, balcony, price):
-        ret, err = self.check_room_exists(room_id)
-        if ret == True:
-            return False, err
+    def get_bookings(self):
+        query = (f"SELECT * FROM bookings")
+        self.db_cursor.execute(query)
+        result = self.db_cursor.fetchall()
+        if not result:
+            return False, 'There are no bookings', result
+        return True, '', result
 
-        if bathroom == 'True':
-            bathroom = True
-        else:
-            bathroom = False
-
-        if balcony == 'True':
-            balcony = True
-        else:
-            balcony = False
-
-        query = ("INSERT INTO rooms (room_id, room_type, capacity, bathroom, balcony, price) VALUES (%s, %s, %s, %s, %s, %s)")
-        args = (int(room_id), room_type, int(capacity), bathroom, balcony, int(price))
+    def add_room(self, room_type, capacity, bathroom, balcony, price):
+        query = ("INSERT INTO rooms (room_type, capacity, bathroom, balcony, price) VALUES (%s, %s, %s, %s, %s)")
+        args = (room_type, int(capacity), bathroom, balcony, int(price))
         self.db_cursor.execute(query, args)
         return True, 'Room added successfully'
+
+    def delete_booking(self, booking_id):
+        query = (f"DELETE FROM bookings WHERE booking_id={booking_id}")
+        args = (int(booking_id))
+        self.db_cursor.execute(query, args)
+        return True, 'Booking deleted successfully'
+
+    def delete_room_bookings(self, room_id):
+        query = (f"DELETE FROM bookings WHERE room_id={room_id}")
+        args = (int(room_id))
+        self.db_cursor.execute(query, args)
+        return True, 'Bookings for room deleted successfully'
+
+    def delete_room(self, room_id):
+        ret, err = self.delete_room_bookings(room_id)
+        if ret == False:
+            return False, err
+
+        query = (f"DELETE FROM rooms WHERE room_id={room_id}")
+        args = (int(room_id))
+        self.db_cursor.execute(query, args)
+        return True, 'Room deleted successfully'
 
     def book(self, room_id, first_name, last_name, check_in, check_out):
         ret, err = self.check_room_exists(room_id)
@@ -91,7 +107,7 @@ def init():
         DROP TABLE IF EXISTS rooms;
 
         CREATE TABLE IF NOT EXISTS rooms(
-            room_id INT(6) UNSIGNED NOT NULL PRIMARY KEY,
+            room_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             room_type VARCHAR(32),
             capacity INT(6),
             bathroom BOOLEAN,
@@ -109,8 +125,8 @@ def init():
             FOREIGN KEY (room_id) REFERENCES rooms(room_id)
         );
 
-        INSERT INTO rooms (room_id, room_type, capacity, bathroom, balcony, price) VALUES (1, "Apartament", 4, True, False, 210);
-        INSERT INTO rooms (room_id, room_type, capacity, bathroom, balcony, price) VALUES (2, "Double room", 2, True, False, 100);
+        INSERT INTO rooms (room_type, capacity, bathroom, balcony, price) VALUES ("Apartament", 4, True, False, 210);
+        INSERT INTO rooms (room_type, capacity, bathroom, balcony, price) VALUES ("Double room", 2, True, False, 100);
         commit;
         """,
         multi = True)
@@ -129,14 +145,43 @@ db_connection = db_connection()
 
 @app.route("/add_room", methods=["POST"])
 def add_room():
-    room_id = request.json['room_id']
     room_type = request.json['room_type']
     capacity = request.json['capacity']
     bathroom = request.json['bathroom']
     balcony = request.json['balcony']
     price = request.json['price']
 
-    ret, err = db_connection.add_room(room_id, room_type, capacity, bathroom, balcony, price)
+    ret, err = db_connection.add_room(room_type, capacity, bathroom, balcony, price)
+    if ret:
+        status = 'Success'
+    else:
+        status = 'Failed'
+
+    return jsonify({
+        'status' : status,
+        'reason' : err,
+    })
+
+@app.route("/delete_booking", methods=["POST"])
+def delete_booking():
+    booking_id = request.json['booking_id']
+
+    ret, err = db_connection.delete_booking(booking_id)
+    if ret:
+        status = 'Success'
+    else:
+        status = 'Failed'
+
+    return jsonify({
+        'status' : status,
+        'reason' : err,
+    })
+
+@app.route("/delete_room", methods=["POST"])
+def delete_room():
+    room_id = request.json['room_id']
+
+    ret, err = db_connection.delete_room(room_id)
     if ret:
         status = 'Success'
     else:
@@ -156,8 +201,8 @@ def get_dict_from_data(s):
             result[k] = v
     return result
 
-@app.route("/booking", methods=["POST"])
-def book():
+@app.route("/book_room", methods=["POST"])
+def book_room():
     data = get_dict_from_data(request.data.decode("utf-8"))
     room_id = data['room_id']
     first_name = data['first_name']
@@ -188,6 +233,20 @@ def get_rooms():
         'status' : status,
         'reason' : err,
         'rooms': rooms,
+    })
+
+@app.route("/bookings", methods=["GET"])
+def get_bookings():
+    ret, err, bookings = db_connection.get_bookings()
+    if ret:
+        status = 'Success'
+    else:
+        status = 'Failed'
+
+    return jsonify({
+        'status' : status,
+        'reason' : err,
+        'bookings': bookings,
     })
 
 if __name__ == "__main__":
