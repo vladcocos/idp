@@ -58,7 +58,6 @@ def get_room_ids():
         room_id = room[0]
         room_type = room[1]
         room_price = room[-1]
-        print(room, flush=True)
         result.append((str(room_id), '%s (%d) - %s' % (room_type, room_id, room_price)))
     return result
    
@@ -86,7 +85,7 @@ def add_room():
         return render_template('result.html', title=title,
                                description=description,
                                status=status, reason=reason)
-    return render_template('add_room.html', form=form)
+    return render_template('form.html', form=form, title='Add a room')
 
 @app.route('/delete_booking', methods={'GET', 'POST'})
 def delete_booking():
@@ -107,7 +106,7 @@ def delete_booking():
         return render_template('result.html', title=title,
                                description=description,
                                status=status, reason=reason)
-    return render_template('delete_booking.html', form=form)
+    return render_template('form.html', form=form, title='Delete a booking')
 
 @app.route('/delete_room', methods={'GET', 'POST'})
 def delete_room():
@@ -128,7 +127,7 @@ def delete_room():
         return render_template('result.html', title=title,
                                description=description,
                                status=status, reason=reason)
-    return render_template('delete_room.html', form=form)
+    return render_template('form.html', form=form, title='Delete a room')
 
 @app.route('/rooms', methods={'GET', 'POST'})
 def rooms():

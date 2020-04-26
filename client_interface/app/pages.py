@@ -58,7 +58,6 @@ def book_room():
                    'check_in': form.check_in.data,
                    'check_out': form.check_out.data}
         header = {"Content-Type":"application/json"}
-        print(payload, flush=True)
         r = session.post(DB_ADAPTER_URL + '/book_room', headers=header, data=payload)
 
         title = 'Booking result'
