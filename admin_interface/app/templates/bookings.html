@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="container">
+        <h1>Bookings</h1>
+        <br>
+        <br>
+        <table class="table table-hover" style="font-size:20px">
+        <thead class="thead-dark">
+            <tr>
+            <th scope="col">Booking number</th>
+            <th scope="col">Room number</th>
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Check-in</th>
+            <th scope="col">Check-out</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    {% for item in booking %}
+                        <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        
+    </div>
+{% endblock %}
