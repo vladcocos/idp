@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, request, session
 from app import app
 from app.web_forms import *
+from datetime import date
 import requests
 import os
 import json
@@ -40,6 +41,12 @@ def get_room_ids():
         result.append((str(room_id), room_type + ' (' + str(room_id) + ') - ' + str(room_price)))
     return result
 
+def correct_dates(check_in, check_out):
+    today = date.today()
+    if check_in >= check_out or check_in < today or check_out < today:
+        return False
+    return True
+
 @app.route('/rooms', methods={'GET', 'POST'})
 def rooms():
     rooms = get_rooms()
@@ -50,7 +57,7 @@ def book_room():
     form = BookingForm()
     form.room.choices = get_room_ids()
 
-    if form.validate_on_submit():
+    if form.validate_on_submit() and correct_dates(form.check_in.data, form.check_out.data):
         room_id = form.room.data
         payload = {'room_id': form.room.data,
                    'first_name': form.first_name.data,
