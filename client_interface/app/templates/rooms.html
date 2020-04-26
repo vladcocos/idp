@@ -15,7 +15,6 @@
             <th scope="col">Bathroom</th>
             <th scope="col">Balcony</th>
             <th scope="col">Price (per night)</th>
-            <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -24,7 +23,6 @@
                     {% for room_item in room %}
                         <td>{{ room_item }}</td>
                     {% endfor %}
-                    <td><a href="/booking?room_id={{ room[0] }}" class="btn btn-success btn-sm" role="button" >Book</a></td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -5,7 +5,6 @@ import requests
 import os
 import json
 
-SECRET_KEY = 'abcdef'
 DB_ADAPTER_URL = 'http://0.0.0.0:32500'
 
 current_rooms = {}
@@ -46,15 +45,10 @@ def rooms():
     rooms = get_rooms()
     return render_template('rooms.html', rooms=rooms)
 
-@app.route('/booking', methods={'GET', 'POST'})
-def booking():
+@app.route('/book_room', methods={'GET', 'POST'})
+def book_room():
     form = BookingForm()
     form.room.choices = get_room_ids()
-
-    if request.args and 'room_id' in request.args:
-        room_id = request.args.get('room_id')
-        form.room.default = request.args['room_id']
-        form.process()
 
     if form.validate_on_submit():
         room_id = form.room.data
@@ -64,18 +58,17 @@ def booking():
                    'check_in': form.check_in.data,
                    'check_out': form.check_out.data}
         header = {"Content-Type":"application/json"}
-        r = session.post(DB_ADAPTER_URL + '/booking', headers=header, data=payload)
+        print(payload, flush=True)
+        r = session.post(DB_ADAPTER_URL + '/book_room', headers=header, data=payload)
 
-        booking_details = '%s between %s and %s' % (current_rooms[int(room_id)][1],
-                                                    form.check_in.data.strftime('%d/%m/%Y'),
-                                                    form.check_out.data.strftime('%d/%m/%Y'))
-        status = 'has failed'
-        reason = 'An error has occured.'
-        
-        if r.status_code == requests.codes.ok:
-            status = r.json()['status']
-            reason = r.json()['reason']
-        
-        return render_template('booking_result.html', booking_details=booking_details,
+        title = 'Booking result'
+        description = 'Your booking for %s between %s and %s' % (current_rooms[int(room_id)][1],
+                                                    form.check_in.data.strftime('%d %b %Y'),
+                                                    form.check_out.data.strftime('%d %b %Y'))
+        status = r.json()['status']
+        reason = r.json()['reason']
+
+        return render_template('result.html', title=title,
+                               description=description,
                                status=status, reason=reason)
-    return render_template('booking.html', form=form)
+    return render_template('book_room.html', form=form)

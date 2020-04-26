@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, SelectField, MultipleFileField
-from wtforms.fields.html5 import EmailField, DateField
-from wtforms.validators import DataRequired, Email
+from wtforms import StringField, BooleanField, SubmitField, SelectField
+from wtforms.fields.html5 import DateField
+from wtforms.validators import DataRequired, InputRequired
 
 class BookingForm(FlaskForm):
     room = SelectField('Room')
