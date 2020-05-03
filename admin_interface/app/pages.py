@@ -5,7 +5,7 @@ import requests
 import os
 import json
 
-DB_ADAPTER_URL = 'http://0.0.0.0:32500'
+DB_ADAPTER_URL = 'http://adapter:32500'
 
 current_rooms = {}
 session = requests.Session()

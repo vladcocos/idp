@@ -21,5 +21,19 @@ services:
     ports:
       - "32500:32500"
 
+  admin_interface:
+    image: admin_interface
+    depends_on:
+      - adapter
+    ports:
+      - "32501:32501"
+
+  client_interface:
+    image: client_interface
+    depends_on:
+      - adapter
+    ports:
+      - "32502:32502"
+
 volumes:
   db_data: {}
