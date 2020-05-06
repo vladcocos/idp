@@ -4,3 +4,8 @@ sudo docker service ls
 sudo docker container ls
 sudo docker stack rm booking
 sudo docker exec -it <container_id> bash
+sudo docker-compose -f stack.yml up
+sudo docker-compose -f stack.yml down
+sudo docker build -t adapter ./adapter
+sudo docker build -t admin_interface ./admin_interface
+sudo docker build -t client_interface ./client_interface
