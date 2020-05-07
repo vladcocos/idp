@@ -31,16 +31,4 @@ scrape_configs:
       - filefd
       - filesystem
       - xfs
-
-  - job_name: 'client_interface'
-    static_configs:
-      - targets: ['client_interface:9323']
-      
-  - job_name: 'admin_interface'
-    static_configs:
-      - targets: ['admin_interface:9323']
-      
-  - job_name: 'adapter'
-    static_configs:
-      - targets: ['adapter:9323']
     

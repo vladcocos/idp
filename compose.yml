@@ -5,7 +5,6 @@ services:
     image: mysql:5.7
     volumes:
     - db_data:/var/lib/mysql
-    - ./database/init.sql:/docker-entrypoint-initdb.d/0_init.sql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: hotel_booking_db
@@ -55,7 +54,6 @@ services:
       - client_interface
       - admin_interface
     depends_on:
-      - cadvisor
       - node-exporter
       - admin_interface
       - client_interface
