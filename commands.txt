@@ -9,3 +9,14 @@ sudo docker-compose -f stack.yml down
 sudo docker build -t adapter ./adapter
 sudo docker build -t admin_interface ./admin_interface
 sudo docker build -t client_interface ./client_interface
+sudo docker-machine create --driver amazonec2 --amazonec2-region us-east-2 --amazonec2-open-port 8080 --amazonec2-open-port 32500 --amazonec2-open-port 32501 --amazonec2-open-port 32502 --amazonec2-open-port 2377 --amazonec2-access-key AKIAI6H5NAIHIGFMAC6A --amazonec2-secret-key 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 booking10
+sudo docker-machine create --driver amazonec2 --amazonec2-region us-east-2 --amazonec2-open-port 8080 --amazonec2-open-port 32500 --amazonec2-open-port 32501 --amazonec2-open-port 32502 --amazonec2-open-port 2377 --amazonec2-access-key AKIAI6H5NAIHIGFMAC6A --amazonec2-secret-key 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 booking11
+sudo docker-machine ssh booking10
+$ sudo docker swarm init
+sudo docker-machine ssh bookin11
+sudo docker swarm join --token SWMTKN-1-620fxhzd6fus5jdzkd9n1hn3qaljn8j7fry9a97i9frpgwc05v-au1up93gvduo01ypyu2hazhnl 172.31.9.11:2377
+$ sudo docker swarm join (de mai sus)
+sudo docker-machine scp stack.yml bookign:.
+sudo docker-machine scp -r prometheus booking10:.
+sudo docker-machine ssh booking10
+$ sudo docker stack deploy -c stack.yml booking
